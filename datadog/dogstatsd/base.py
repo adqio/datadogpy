@@ -3,7 +3,6 @@
 DogStatsd is a Python client for DogStatsd, a Statsd fork for Datadog.
 """
 
-import logging
 import os
 from random import random
 from time import time
@@ -17,7 +16,6 @@ except ImportError:
     imap = map
 
 
-log = logging.getLogger('dogstatsd')
 
 
 class DogStatsd(object):
@@ -88,7 +86,7 @@ class DogStatsd(object):
                     if fields[1] == '00000000':
                         return socket.inet_ntoa(struct.pack('<L', int(fields[2], 16)))
         except IOError as e:
-            log.error('Unable to open /proc/net/route: %s', e)
+            print('Unable to open /proc/net/route: %s', e)
 
         return None
 
@@ -298,12 +296,12 @@ class DogStatsd(object):
             # If set, use socket directly
             (self.socket or self.get_socket()).send(packet.encode(self.encoding))
         except socket.error:
-            log.info("Error submitting packet, will try refreshing the socket")
+            print("Error submitting packet, will try refreshing the socket")
             self.socket = None
             try:
                 self.get_socket().send(packet.encode(self.encoding))
             except socket.error:
-                log.exception("Failed to send packet with a newly binded socket")
+                print("Failed to send packet with a newly binded socket")
 
     def _send_to_buffer(self, packet):
         self.buffer.append(packet)
